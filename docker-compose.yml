@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  xiaoniu_tasks_docker:
+    build: "./"
+    volumes:
+      - /home/www/xiaoniu_tasks:/home/www
+    ports:
+      - "6656:6656"
+    command: "/home/www/docker_start.sh"
+    restart: always

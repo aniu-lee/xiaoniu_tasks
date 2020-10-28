@@ -1,0 +1,185 @@
+{% extends "admin_base.html" %}
+
+{% block css %}
+{% endblock %}
+{% block content %}
+    <div class="wrap">
+        <div class="jumbotron">
+            <div style="text-align: center">
+                <h1 class="display-4">小牛异步队列任务系统</h1>
+                <p class="lead">&nbsp;&nbsp;方便、统一、自由</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li><a href="/">执行记录列表</a></li>
+            <li class="active"><a href="{{ url_for('main.api_doc') }}">API文档</a></li>
+            <li><a href="{{ url_for('main.logout') }}">退出</a></li>
+        </ul>
+        <form method="post" class="form-horizontal js-ajax-form" action=''>
+            <fieldset>
+                <div class="control-group">
+                    <h3 id="urls"></h3>
+                    <h5>请求方式: POST</h5>
+                    <h4>参数说明：</h4>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th>类型</th>
+                            <th>是否必传</th>
+                            <th>说明</th>
+                            <th>测试</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>access_token</td>
+                                <td>string</td>
+                                <td>否</td>
+                                <td>conf.ini配置,如果没配置，证明不验证</td>
+                                <td><input type="text" name="access_token"></td>
+                            </tr>
+                            <tr>
+                                <td>req_url</td>
+                                <td>string</td>
+                                <td>是</td>
+                                <td>回调请求地址（默认采用GET进行回调）</td>
+                                <td><input type="text" name="req_url" id="req_url">(假如请求返回含有“fail”字符串就相当于报错，conf.ini可以自定义配置)</td>
+                            </tr>
+                            <tr>
+                                <td>remark</td>
+                                <td>string</td>
+                                <td>否</td>
+                                <td>备注</td>
+                                <td><input type="text" name="remark"></td>
+                            </tr>
+                            <tr>
+                                <td>delay_time</td>
+                                <td>int</td>
+                                <td>否</td>
+                                <td>延迟时间，单位：秒。默认0不延迟</td>
+                                <td><input type="number" name="delay_time" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>post_json</td>
+                                <td>json string</td>
+                                <td>否</td>
+                                <td>JSON 字符串参数，假如有传，则回调采用POST请求。</td>
+                                <td><input type="text" name="post_json"></td>
+                            </tr>
+                            <tr>
+                                <td>is_fail_try</td>
+                                <td>int</td>
+                                <td>否</td>
+                                <td>请求失败后是否重试。默认0不重试，1重试</td>
+                                <td><input type="text" name="is_fail_try" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td>priority</td>
+                                <td>int</td>
+                                <td>否</td>
+                                <td>消息中间件选择rabbitmq，才有此参数选项。优先级。值0到9。0代表不参与优先级处理，值越大优先级越高。</td>
+                                <td><input type="text" name="priority" value="0"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><button type="button" class="btn btn-info" id="btn1">提交测试</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </form>
+        <form method="post" class="form-horizontal js-ajax-form form2" action=''>
+            <fieldset>
+                <div class="control-group">
+                    <h3 id="urls2"></h3>
+                    <h5>请求方式: GET,POST</h5>
+                    <h4>参数说明：</h4>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th>类型</th>
+                            <th>是否必传</th>
+                            <th>说明</th>
+                            <th>测试</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>access_token</td>
+                                <td>string</td>
+                                <td>否</td>
+                                <td>conf.ini配置,如果没配置，证明不验证</td>
+                                <td><input type="text" name="access_token"></td>
+                            </tr>
+                            <tr>
+                                <td>req_id</td>
+                                <td>string</td>
+                                <td>是</td>
+                                <td>请求编号</td>
+                                <td><input type="text" name="req_id"></td>
+                            </tr>
+                            <tr>
+                                <td>result</td>
+                                <td>string</td>
+                                <td>是</td>
+                                <td>任务运行结果</td>
+                                <td><input type="text" name="result"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><button type="button" class="btn btn-info" id="btn2">提交测试</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var HOST_URL = function(){
+            var url = window.location.href;
+            var port = location.port;
+            var hostUrl = "http://";
+            if (url.indexOf("https")!==-1) {
+                hostUrl = "https://";
+            }
+            if(port === 80){
+                hostUrl += location.hostname;
+            }else{
+                hostUrl += location.host;
+            }
+            return hostUrl;
+        }();
+
+        $('#urls').html("添加任务： "+ HOST_URL +"/api/task")
+
+        $('#urls2').html("上传结果： "+ HOST_URL +"/api/task_result_add")
+
+        $('#req_url').prop('value', HOST_URL + '/api/demo?name=xiaoniu_tasks')
+        $('#btn1').click(function () {
+            var dd = $('form.form-horizontal').serialize()
+            $.post("{{ url_for('api.task') }}",dd,function (data) {
+                alert(JSON.stringify(data))
+            })
+        });
+        $('#btn2').click(function () {
+            var dd = $('form.form2').serialize()
+            $.post("{{ url_for('api.task_result_add') }}",dd,function (data) {
+                alert(JSON.stringify(data))
+            })
+        });
+    </script>
+{%  endblock %}

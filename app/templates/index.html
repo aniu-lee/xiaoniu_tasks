@@ -1,0 +1,74 @@
+{% extends "admin_base.html" %}
+
+{% import "admin_page.html" as pg %}
+{% block content %}
+
+    <div class="wrap js-check-wrap">
+
+        <div class="jumbotron" >
+            <div style="text-align: center">
+                <h1 class="display-4">小牛异步队列任务系统</h1>
+                <p class="lead">&nbsp;&nbsp;方便、统一、自由</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="/">执行记录列表</a></li>
+            <li><a href="{{ url_for('main.api_doc') }}">API文档</a></li>
+            <li><a href="{{ url_for('main.logout') }}">退出</a></li>
+        </ul>
+        <form class="well form-search" method="get" action="{{ url_for('main.req_log_list') }}">高级查询：
+            <input type="text" placeholder="ID/链接/结果" name="keyword" value="{{ keyword.get("keyword","") }}">
+            <input type="submit" class="btn btn-primary" value="搜索"/>
+            <a href="/" class="btn btn-danger">重置</a>
+        </form>
+        <form method="post" class="js-ajax-form" action="{{ url_for('main.req_log_batch_del') }}">
+            <div class="table-actions">
+                <button type="submit" class="btn btn-primary btn-small js-ajax-submit">批量删除</button>
+            </div>
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x"
+                                                 data-checklist="js-check-x"></label></th>
+                    <th>ID</th>
+                    <th>请求链接</th>
+                    <th>备注</th>
+                    <th>post_json数据</th>
+                    <th>执行结果</th>
+                    <th>回调结果</th>
+                    <th>执行时间</th>
+                    <th>更新时间</th>
+                    <th>是否报错</th>
+                    <th>耗时</th>
+                    <th width="120">操作事项</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_data.items %}
+                    <tr>
+                        <td><input class="js-check" data-yid="js-check-y" data-xid="js-check-x" type="checkbox" name="id" value="{{ item.id }}"></td>
+                        <td>{{ item.req_id }}</td>
+                        <td>{{ item.req_url }}</td>
+                        <td>{{ item.remark }}</td>
+                        <td>{{ item.post_json }}</td>
+                        <td><a href="javascript:;" onclick="open_iframe_dialog('{{ url_for('main.req_result',id=item.id,type=1) }}','执行结果')">查看</a></td>
+                        <td><a href="javascript:;" onclick="open_iframe_dialog('{{ url_for('main.req_result',id=item.id,type=2) }}','回调结果')">查看</a></td>
+                        <td>{{ item.create_time }}</td>
+                        <td>{{ item.update_time }}</td>
+                        <td>{{ "无" if item.is_err == 0 else "有"  }}</td>
+                        <td>{{ item.take_time }}</td>
+                        <td>
+                            <a href="{{ url_for('main.do_requests',id=item.id) }}" class="js-ajax-dialog-btn">再请求一次</a> |
+                            <a class="js-ajax-delete" href="{{ url_for('main.delete_log',id=item.id) }}">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        <div class="pagination">
+            {{ pg.page(page_data,'main.req_log_list',keyword) }}
+        </div>
+    </div>
+{% endblock %}

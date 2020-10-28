@@ -1,0 +1,16 @@
+{% extends "admin_base.html" %}
+
+{% block css %}
+{% endblock %}
+{% block content %}
+    <div class="wrap">
+        <div class="jumbotron">
+            <div style="text-align: center">
+                <h1 class="display-4">小牛异步队列系统</h1>
+                <p class="lead">&nbsp;&nbsp;方便、统一、自由</p>
+            </div>
+        </div>
+        <hr>
+        <p>{{ content | safe }}</p>
+    </div>
+{% endblock %}
