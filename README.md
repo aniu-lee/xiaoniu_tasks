@@ -79,7 +79,7 @@ sudo docker-compose up --build -d
 
 。。。
 
-[更多例子设置参考](https://www.aniulee.com/#/details?id=260 "更多例子")
+[更多例子设置参考](https://www.aniulee.com/#/details?id=276 "更多例子")
 
 ### 七、关于本人
 
