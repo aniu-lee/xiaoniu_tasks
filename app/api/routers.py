@@ -66,7 +66,9 @@ def task():
 
     if post_json:
         try:
-            json.loads(post_json)
+            j = json.loads(post_json)
+            if type(j) != dict:
+                api_err_return(msg='post_json格式有问题')
         except:
             return api_err_return(msg='post_json格式有问题')
 

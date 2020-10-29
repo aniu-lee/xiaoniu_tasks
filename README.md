@@ -1,4 +1,4 @@
-# 小牛异步队列任务系统（xiaoniu_tasks）
+# 小牛异步队列（xiaoniu_tasks）
 
 
 ### 特性
